@@ -1,0 +1,28 @@
+{
+  "domain": "bacagroove.com",
+  "title": "Bača Groove Orchestra",
+  "tagline": "The Shepherds of Neural Networks",
+  "description": "Jsme neskutečná kapela Bača Groove Orchestra. S pomocí digitálních technologií objevujeme nové umělecké cesty při tvorbě hudby.",
+  "about": "Jsme neskutečná kapela Bača Groove Orchestra. S pomocí digitálních technologií objevujeme nové umělecké cesty při tvorbě hudby.",
+  "about_en": "We are Bača Groove Orchestra, an unreal band. With the help of digital technology we explore new artistic paths in making music.",
+  "contact": {"name": "DJ Tominai", "email": "djtominai@gmail.com"},
+  "platforms": {
+    "spotify": "https://open.spotify.com/artist/3hBKAUtRaHKlpbCdaEBxly",
+    "youtube": "https://www.youtube.com/@bacagroove",
+    "ytmusic": "https://music.youtube.com/channel/UCZefZ0NE87-eoS6u-54avYg",
+    "apple": "https://music.apple.com/cz/artist/ba%C4%8Da-groove-orchestra/1782679104"
+  },
+  "social": {
+    "instagram": "https://www.instagram.com/baca_groove/",
+    "facebook": "https://www.facebook.com/bacagroove",
+    "threads": "https://www.threads.com/@baca_groove",
+    "tiktok": "https://www.tiktok.com/@bacagroove",
+    "youtube": "https://www.youtube.com/@bacagroove"
+  },
+  "featured": {"slug": "po-korenech", "tag": "Nový singl", "tag_en": "New single"},
+  "video": {"id": "iAGfCQvjxvM", "title": "Černé oči", "label": "Oficiální klip", "label_en": "Official video", "poster_slug": "cerne-oci"},
+  "songs": ["zeme-dostojevskeho", "kruhy-zamotane", "pasli-ovce-valasi", "pod-zlatymi-stromy", "cerne-oci", "burcakove-tango"],
+  "listen_base": "https://listen.bacagroove.com",
+  "goatcounter": "https://bacagroove.goatcounter.com/count",
+  "pixel": "9274922125960349"
+}
