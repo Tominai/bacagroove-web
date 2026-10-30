@@ -1,3 +1,5 @@
+<link rel="preload" as="image" type="image/webp" href="assets/bg-1280.webp" media="(max-width:999px) and (max-resolution:1.99dppx)" fetchpriority="high">
+<link rel="preload" as="image" type="image/webp" href="assets/bg.webp" media="(min-width:1000px),(min-resolution:2dppx)" fetchpriority="high">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alegreya+Sans+SC:wght@500;800&family=Alegreya+Sans:wght@400;500;700&display=swap">
 <style>
 /* Zima: fotka Bači na zasněženém náměstí přes celou plochu, obsah na ojíněném skle; cihlová červeň hradeb, smetanový kožich, ledová obloha, kobercový ornament */
@@ -8,8 +10,10 @@
 }
 html,body{background:#1b2333;color:var(--snow)}
 body::after{display:none}
-.photo{position:fixed;inset:0;z-index:0;background:#1b2333 url(assets/bg-1280.jpg) 64% 40%/cover no-repeat}
-@media(min-width:1000px),(min-resolution:2dppx){.photo{background-image:url(assets/bg.jpg)}}
+.photo{position:fixed;inset:0;z-index:0;background:#1b2333 url(assets/bg-1280.jpg) 64% 40%/cover no-repeat;
+  background-image:image-set(url(assets/bg-1280.webp) type("image/webp"),url(assets/bg-1280.jpg) type("image/jpeg"))}
+@media(min-width:1000px),(min-resolution:2dppx){.photo{background-image:url(assets/bg.jpg);
+  background-image:image-set(url(assets/bg.webp) type("image/webp"),url(assets/bg.jpg) type("image/jpeg"))}}
 .photo::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,28,42,0) 50%,rgba(20,28,42,.25) 100%)}
 @media(min-width:900px){.photo{background-position:center 40%}.photo::after{background:linear-gradient(90deg,rgba(14,20,32,.72) 0%,rgba(14,20,32,.35) 38%,rgba(14,20,32,0) 58%)}}
 
@@ -35,9 +39,8 @@ a:focus-visible,button:focus-visible{outline-color:var(--fur)}
 .hero,.hero{grid-template-columns:1fr!important;gap:18px;padding-block:0 26px;align-items:start}
 .portrait{display:none}
 .ident{gap:16px}
-h1{display:block;width:min(320px,82%);aspect-ratio:458/214;margin-inline:auto;background:url(assets/wordmark.png) center/contain no-repeat;
-  color:transparent;font-size:1px;line-height:1;overflow:hidden;filter:drop-shadow(0 2px 10px rgba(0,0,0,.35))}
-h1 span{color:transparent}
+h1{display:block;width:min(320px,82%);margin-inline:auto;line-height:0}
+h1 img{display:block;width:100%;height:auto;filter:drop-shadow(0 2px 10px rgba(0,0,0,.35))}
 .tag{text-align:center;font-family:var(--display);font-weight:500;letter-spacing:.08em;font-size:17px;color:var(--ice);margin-top:-6px}
 .row{background:rgba(14,20,32,.38);border-color:var(--frost);border-radius:14px}
 .row:hover{background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.4)}

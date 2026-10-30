@@ -27,16 +27,16 @@ def intent(url, p):
     return f"intent://{rest}#Intent;scheme=https;package={ANDROID_PKG[p]};end"
 
 
-def cover(listen, slug, out, size=480):
+def cover(listen, slug, out, size=360):
     src = listen / slug / "cover.jpg"
-    dst = out / "covers" / f"{slug}.jpg"
+    dst = out / "covers" / f"{slug}.webp"
     dst.parent.mkdir(parents=True, exist_ok=True)
     im = Image.open(src).convert("RGB")
     w, h = im.size
     s = min(w, h)
     im = im.crop(((w - s) // 2, (h - s) // 2, (w - s) // 2 + s, (h - s) // 2 + s)).resize((size, size), Image.LANCZOS)
-    im.save(dst, "JPEG", quality=84, optimize=True, progressive=True)
-    return f"covers/{slug}.jpg"
+    im.save(dst, "WEBP", quality=80, method=6)
+    return f"covers/{slug}.webp"
 
 
 def main():
@@ -55,6 +55,9 @@ def main():
         if f.suffix in (".svg", ".png", ".jpg", ".webp") and f.name != "artist.png":
             shutil.copy(f, out / "assets" / f.name)
     Image.open(ROOT / "assets" / "artist.png").convert("RGB").save(out / "assets" / "artist.jpg", "JPEG", quality=86, optimize=True)
+    Image.open(ROOT / "assets" / "artist.png").convert("RGB").resize((180, 180), Image.LANCZOS).save(out / "assets" / "icon.png", optimize=True)
+    for f in (ROOT / "assets").glob("bg*.jpg"):
+        Image.open(f).save(out / "assets" / (f.stem + ".webp"), "WEBP", quality=78, method=6)
 
     def song(slug):
         d = json.loads((listen / "_data" / f"{slug}.json").read_text())
@@ -65,7 +68,7 @@ def main():
     feat = song(site["featured"]["slug"])
     songs = [song(s) for s in site["songs"] if s != feat["slug"]]
     vid = site["video"]
-    poster = cover(listen, vid["poster_slug"], out, 720)
+    poster = cover(listen, vid["poster_slug"], out)
     base = f"https://{site['domain']}"
 
     # --- platformy
@@ -82,7 +85,7 @@ def main():
             f'<span class="play"><span data-en="{btn[1]}">{btn[0]}</span><i class="tri" aria-hidden="true"></i></span></a>')
 
     tiles = "\n".join(
-        f'<a class="tile" href="{e(s["url"])}" data-song="{s["slug"]}"><img src="{s["img"]}" alt="" loading="lazy" width="480" height="480">'
+        f'<a class="tile" href="{e(s["url"])}" data-song="{s["slug"]}"><img src="{s["img"]}" alt="" loading="lazy" decoding="async" width="360" height="360">'
         f'<span class="tname">{e(s["title"])}</span></a>' for s in songs)
 
     social = "".join(
@@ -96,10 +99,10 @@ def main():
 
     measure = "" if a.preview else (
         f'<script data-goatcounter="{e(site["goatcounter"])}" async src="https://gc.zgo.at/count.js"></script>\n'
-        "<script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};"
+        "<script>window.addEventListener('load',function(){setTimeout(function(){!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};"
         "if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];"
         "s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');"
-        f"fbq('init','{site['pixel']}');fbq('track','PageView');</script>")
+        f"fbq('init','{site['pixel']}');fbq('track','PageView');}},1200)}});</script>")
 
     page = TEMPLATE
     repl = {
@@ -117,6 +120,14 @@ def main():
     }
     theme = a.theme or site.get("theme", "les")
     tdir = ROOT / "themes" / theme
+    opt = json.loads((tdir / "options.json").read_text()) if (tdir / "options.json").exists() else {}
+    repl["OG_IMAGE"] = base + "/" + opt.get("og_image", "assets/artist.jpg")
+    repl["OG_SIZE"] = opt.get("og_size", "486x486").split("x")[0], opt.get("og_size", "486x486").split("x")[1]
+    repl["OG_W"], repl["OG_H"] = repl.pop("OG_SIZE")
+    repl["H1"] = ('<img src="assets/wordmark.png" alt="Bača Groove Orchestra" width="458" height="214" fetchpriority="high">'
+                  if opt.get("wordmark") else 'Bača Groove <span>Orchestra</span>')
+    repl["PORTRAIT"] = "" if opt.get("portrait") is False else PORTRAIT
+    repl["LD"] = repl["LD"].replace(base + "/assets/artist.jpg", repl["OG_IMAGE"])
     for part in ("head", "art", "tail"):
         f = tdir / f"{part}.html"
         repl["THEME_" + part.upper()] = f.read_text() if f.exists() else ""
@@ -141,16 +152,21 @@ def main():
     print("hotovo:", out)
 
 
+PORTRAIT = """<figure class="portrait"><img src="assets/artist.jpg" alt="Bača s beraními rohy, sluchátky a slunečními brýlemi" data-en-alt="Bača with ram horns, headphones and sunglasses" width="486" height="486">
+    <figcaption>Beskydy · folk · jazz</figcaption></figure>"""
+
 HEAD_FULL = """<!doctype html><html lang="cs"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <link rel="canonical" href="{{BASE}}/">
 <meta property="og:type" content="website"><meta property="og:url" content="{{BASE}}/">
 <meta property="og:title" content="{{TITLE}} | {{TAGLINE}}"><meta property="og:description" content="{{DESC}}">
-<meta property="og:image" content="{{BASE}}/assets/artist.jpg"><meta name="twitter:card" content="summary_large_image">
-<link rel="icon" href="assets/artist.jpg">
+<meta property="og:image" content="{{OG_IMAGE}}"><meta property="og:image:width" content="{{OG_W}}"><meta property="og:image:height" content="{{OG_H}}">
+<meta property="og:site_name" content="{{TITLE}}"><meta property="og:locale" content="cs_CZ"><meta property="og:locale:alternate" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="assets/icon.png"><link rel="apple-touch-icon" href="assets/icon.png">
 """
 
-TEMPLATE = """{{HEAD}}<title>{{TITLE}}</title>
+TEMPLATE = """{{HEAD}}<title>{{TITLE}} | {{TAGLINE}}</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <meta name="description" content="{{DESC}}">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -246,14 +262,13 @@ footer{text-align:center;color:var(--mute);font-size:13px;padding-top:8px}
 {{THEME_ART}}
 <div class="wrap">
 <header class="top">
-  <img src="assets/logo.png" alt="Bača Groove Orchestra" width="458" height="214" style="width:81px">
+  <img src="assets/logo.png" alt="Bača Groove Orchestra" width="458" height="214" style="width:81px" loading="lazy">
 </header>
 
 <div class="hero">
-  <figure class="portrait"><img src="assets/artist.jpg" alt="Bača s beraními rohy, sluchátky a slunečními brýlemi" data-en-alt="Bača with ram horns, headphones and sunglasses" width="486" height="486">
-    <figcaption>Beskydy · folk · jazz</figcaption></figure>
+  {{PORTRAIT}}
   <div class="ident">
-    <div><h1>Bača Groove <span>Orchestra</span></h1></div>
+    <div><h1>{{H1}}</h1></div>
     <p class="tag">{{TAGLINE}}</p>
     <nav class="list" aria-label="Poslech">
 {{ROWS}}
@@ -263,9 +278,9 @@ footer{text-align:center;color:var(--mute);font-size:13px;padding-top:8px}
 
 <section>
   <div class="duo">
-    <a class="card" href="{{FEAT_URL}}" data-song="{{FEAT_SLUG}}"><img src="{{FEAT_IMG}}" alt="" width="480" height="480">
+    <a class="card" href="{{FEAT_URL}}" data-song="{{FEAT_SLUG}}"><img src="{{FEAT_IMG}}" alt="" width="360" height="360" loading="lazy" decoding="async">
       <span class="meta"><span class="eyebrow" data-en="{{FEAT_TAG_EN}}">{{FEAT_TAG}}</span><h3>{{FEAT_TITLE}}</h3><span class="go"><span data-en="LISTEN">POSLECHNI SI</span><i class="tri"></i></span></span></a>
-    <a class="card vid" href="{{VID_URL}}" data-a="{{VID_INTENT}}" data-video="1" rel="noopener"><span class="thumb"><img src="{{VID_POSTER}}" alt="" width="720" height="720"></span>
+    <a class="card vid" href="{{VID_URL}}" data-a="{{VID_INTENT}}" data-video="1" rel="noopener"><span class="thumb"><img src="{{VID_POSTER}}" alt="" width="360" height="360" loading="lazy" decoding="async"></span>
       <span class="meta"><span class="eyebrow" data-en="{{VID_LABEL_EN}}">{{VID_LABEL}}</span><h3>{{VID_TITLE}}</h3><span class="go"><span data-en="WATCH ON YOUTUBE">PŘEHRÁT NA YOUTUBE</span><i class="tri"></i></span></span></a>
   </div>
 </section>
