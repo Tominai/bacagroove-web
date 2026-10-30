@@ -247,7 +247,6 @@ footer{text-align:center;color:var(--mute);font-size:13px;padding-top:8px}
 <div class="wrap">
 <header class="top">
   <img src="assets/logo.png" alt="Bača Groove Orchestra" width="458" height="214" style="width:81px">
-  <div class="lang" role="group" aria-label="Jazyk / Language"><button id="lang-cs" type="button" aria-pressed="true">CZ</button><button id="lang-en" type="button" aria-pressed="false">EN</button></div>
 </header>
 
 <div class="hero">
@@ -297,14 +296,9 @@ footer{text-align:center;color:var(--mute);font-size:13px;padding-top:8px}
     document.documentElement.lang=l;
     nodes.forEach(function(n){n.textContent=n.getAttribute(l==="en"?"data-en":"data-cs");});
     var im=document.querySelector("[data-en-alt]");if(im){if(!im.dataset.csAlt)im.dataset.csAlt=im.alt;im.alt=l==="en"?im.getAttribute("data-en-alt"):im.dataset.csAlt;}
-    document.getElementById("lang-cs").setAttribute("aria-pressed",l==="cs");
-    document.getElementById("lang-en").setAttribute("aria-pressed",l==="en");
-    try{localStorage.setItem("bgo_lang",l)}catch(e){}
   }
-  var saved=null;try{saved=localStorage.getItem("bgo_lang")}catch(e){}
-  setLang(saved||(/^(cs|sk)/i.test(navigator.language||"cs")?"cs":"en"));
-  document.getElementById("lang-cs").onclick=function(){setLang("cs")};
-  document.getElementById("lang-en").onclick=function(){setLang("en")};
+  // jazyk podle prohlížeče jako na směřovacích stránkách: čeština a slovenština česky, jinak anglicky
+  setLang(/^(cs|sk)/i.test(navigator.language||"cs")?"cs":"en");
 
   function count(path,title){try{if(window.goatcounter&&goatcounter.count)goatcounter.count({path:path,title:title,event:true});}catch(e){}}
   document.querySelectorAll("a.row,a.card,a.tile").forEach(function(a){
