@@ -1,0 +1,50 @@
+<script>
+(function(){
+  // křížkový steh: motivy tulipán a srdce, střídavě červená a modrotisk; 1 znak = 1 steh
+  var TULIP=[
+    "....R.R....",
+    "...RRRRR...",
+    "..RR.R.RR..",
+    "..RRRRRRR..",
+    "...RRRRR...",
+    ".....G.....",
+    ".G...G...G.",
+    "..GG.G.GG..",
+    "....GGG....",
+    ".....G....."];
+  var HEART=[
+    "...........",
+    "..RR...RR..",
+    ".RRRR.RRRR.",
+    ".RRRRRRRRR.",
+    "..RRRRRRR..",
+    "...RRRRR...",
+    "....RRR....",
+    ".....R.....",
+    "...........",
+    "..G.G.G.G.."];
+  var css=getComputedStyle(document.documentElement);
+  var C={R:css.getPropertyValue("--red").trim(),B:css.getPropertyValue("--indigo").trim(),G:css.getPropertyValue("--ink").trim()};
+  function draw(cv){
+    var dpr=window.devicePixelRatio||1,w=cv.clientWidth,cell=4,h=10*cell+4;
+    cv.style.height=h+"px";cv.width=w*dpr;cv.height=h*dpr;
+    var x=cv.getContext("2d");x.scale(dpr,dpr);x.lineWidth=1.2;x.lineCap="round";
+    var mw=13*cell,n=Math.floor(w/mw),off=(w-n*mw)/2;
+    for(var m=0;m<n;m++){
+      var mot=m%2?HEART:TULIP,alt=m%4>1;
+      for(var r=0;r<mot.length;r++)for(var c=0;c<mot[r].length;c++){
+        var ch=mot[r][c];if(ch===".")continue;
+        var col=ch==="G"?C.G:(alt?C.B:C.R);
+        var px=off+m*mw+c*cell+cell,py=r*cell+2;
+        x.strokeStyle=col;x.beginPath();x.moveTo(px+.6,py+.6);x.lineTo(px+cell-.6,py+cell-.6);x.moveTo(px+cell-.6,py+.6);x.lineTo(px+.6,py+cell-.6);x.stroke();
+      }
+    }
+  }
+  var first=document.querySelector(".stitch");
+  var foot=first.parentNode.cloneNode(true);var soc=document.querySelector(".social");
+  soc.parentNode.insertBefore(foot,soc);soc.style.borderTop="0";
+  function all(){document.querySelectorAll(".stitch").forEach(draw);}
+  all();var t;window.addEventListener("resize",function(){clearTimeout(t);t=setTimeout(all,120);});
+  if(document.fonts&&document.fonts.ready)document.fonts.ready.then(all);
+})();
+</script>

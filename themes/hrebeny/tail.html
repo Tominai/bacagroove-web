@@ -1,0 +1,35 @@
+<script>
+(function(){
+  var cv=document.querySelector(".ridges"),x=cv.getContext("2d"),css=getComputedStyle(document.documentElement);
+  var BG=css.getPropertyValue("--deep").trim();
+  // deterministický šum, aby hřebeny vypadaly pokaždé stejně
+  function rng(s){return function(){s=(s*16807)%2147483647;return s/2147483647;};}
+  var R=rng(1907),LINES=24,PTS=90,base=[];
+  for(var l=0;l<LINES;l++){var a=[];for(var i=0;i<PTS;i++)a.push(R());base.push(a);}
+  function smooth(a,i){var n=a.length,s=0;for(var k=-3;k<=3;k++)s+=a[(i+k+n)%n]*(4-Math.abs(k));return s/16;}
+  var still=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function size(){var dpr=window.devicePixelRatio||1;cv.width=cv.clientWidth*dpr;cv.height=cv.clientHeight*dpr;x.setTransform(dpr,0,0,dpr,0,0);}
+  function frame(t){
+    var w=cv.clientWidth,h=cv.clientHeight,top=h*.12,gap=(h*.78)/LINES,mid=w*(w>880?.28:.5);
+    x.clearRect(0,0,w,h);x.lineWidth=1.4;
+    for(var l=0;l<LINES;l++){
+      var y0=top+l*gap,k=l/(LINES-1);
+      x.beginPath();x.moveTo(0,y0);
+      for(var i=0;i<PTS;i++){
+        var px=i/(PTS-1)*w,d=Math.abs(px-mid)/(w*.34),env=Math.max(0,1-d*d);
+        var beat=still?1:(0.82+0.18*Math.sin(t/700+l*.55+i*.08));
+        var amp=(smooth(base[l],i)*1.6+Math.pow(env,2)*1.4)*env*gap*3.4*beat;
+        x.lineTo(px,y0-amp);
+      }
+      x.lineTo(w,y0);x.lineTo(w,h);x.lineTo(0,h);x.closePath();
+      x.fillStyle=BG;x.fill();
+      var r=Math.round(185+(255-185)*k),g=Math.round(167+(106-167)*k),b=Math.round(255+(125-255)*k);
+      x.strokeStyle="rgba("+r+","+g+","+b+","+(0.35+0.55*k)+")";x.stroke();
+    }
+    var fade=x.createLinearGradient(0,h*.7,0,h);fade.addColorStop(0,"rgba(14,11,38,0)");fade.addColorStop(1,BG);x.fillStyle=fade;x.fillRect(0,h*.7,w,h*.3);
+  }
+  size();frame(0);
+  window.addEventListener("resize",function(){size();frame(performance.now());});
+  if(!still){var last=0;(function loop(t){if(t-last>40){frame(t);last=t;}requestAnimationFrame(loop);})(0);}
+})();
+</script>

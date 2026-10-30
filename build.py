@@ -44,6 +44,7 @@ def main():
     ap.add_argument("--listen", default=str(ROOT.parent / "bgo-listen"))
     ap.add_argument("--out", default=str(ROOT / "dist"))
     ap.add_argument("--preview", action="store_true")
+    ap.add_argument("--theme", default=None, help="složka v themes/ (výchozí: site.json theme)")
     a = ap.parse_args()
     listen, out = Path(a.listen), Path(a.out)
     site = json.loads((ROOT / "site.json").read_text())
@@ -114,6 +115,11 @@ def main():
         "LD": json.dumps(ld, ensure_ascii=False), "MEASURE": measure,
         "HEAD": "" if a.preview else HEAD_FULL,
     }
+    theme = a.theme or site.get("theme", "les")
+    tdir = ROOT / "themes" / theme
+    for part in ("head", "art", "tail"):
+        f = tdir / f"{part}.html"
+        repl["THEME_" + part.upper()] = f.read_text() if f.exists() else ""
     for k, v in repl.items():
         page = page.replace("{{" + k + "}}", v)
     page = page.replace("{{" + "BASE" + "}}", base)
@@ -148,7 +154,6 @@ TEMPLATE = """{{HEAD}}<title>{{TITLE}}</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <meta name="description" content="{{DESC}}">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alegreya+Sans+SC:wght@500;800&family=Alegreya+Sans:wght@400;500;700&display=swap">
 <script type="application/ld+json">{{LD}}</script>
 <style>
 /* Rozcestník: jeden sloupec jako směřovací stránky, na počítači hrdina vedle tlačítek; noční les Beskyd, mosaz jako jediný akcent */
@@ -161,7 +166,7 @@ TEMPLATE = """{{HEAD}}<title>{{TITLE}}</title>
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{background:var(--night)}
-body{background:var(--night);color:var(--wool);font-family:var(--body);font-size:17px;line-height:1.5;-webkit-font-smoothing:antialiased;
+body{position:relative;background:var(--night);color:var(--wool);font-family:var(--body);font-size:17px;line-height:1.5;-webkit-font-smoothing:antialiased;
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 28px}
 body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
   background:radial-gradient(ellipse 90% 55% at 50% -5%,#33452c 0%,transparent 70%),radial-gradient(ellipse 60% 40% at 100% 100%,#241d10 0%,transparent 70%)}
@@ -237,6 +242,8 @@ footer{text-align:center;color:var(--mute);font-size:13px;padding-top:8px}
 @media(max-width:380px){.row{padding:12px}.play{font-size:12px;padding:8px 9px}.card{grid-template-columns:96px minmax(0,1fr)}.card img,.vid .thumb{width:96px;height:96px}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
+{{THEME_HEAD}}
+{{THEME_ART}}
 <div class="wrap">
 <header class="top">
   <img src="assets/logo.png" alt="Bača Groove Orchestra" width="458" height="214" style="width:81px">
@@ -280,6 +287,7 @@ footer{text-align:center;color:var(--mute);font-size:13px;padding-top:8px}
 <footer>© 2026 Bača Groove Orchestra</footer>
 </div>
 {{MEASURE}}
+{{THEME_TAIL}}
 <script>
 (function(){
   var SRC=((new URLSearchParams(location.search)).get("utm_source")||"direct").toLowerCase().replace(/[^a-z0-9-]/g,"").slice(0,20)||"direct";
