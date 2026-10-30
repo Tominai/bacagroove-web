@@ -67,3 +67,7 @@ h2{color:var(--snow)}
 .social a:hover svg{fill:var(--snow)}
 footer{color:var(--ice)}
 </style>
+<style>
+/* starší prohlížeče bez rozmazání skla: tmavší panel, aby text zůstal čitelný */
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){.wrap{background:rgba(22,30,46,.82)}}
+</style>
