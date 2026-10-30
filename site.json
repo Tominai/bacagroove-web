@@ -5,7 +5,10 @@
   "description": "Jsme neskutečná kapela Bača Groove Orchestra. S pomocí digitálních technologií objevujeme nové umělecké cesty při tvorbě hudby.",
   "about": "Jsme neskutečná kapela Bača Groove Orchestra. S pomocí digitálních technologií objevujeme nové umělecké cesty při tvorbě hudby.",
   "about_en": "We are Bača Groove Orchestra, an unreal band. With the help of digital technology we explore new artistic paths in making music.",
-  "contact": {"name": "DJ Tominai", "email": "djtominai@gmail.com"},
+  "contact": {
+    "name": "DJ Tominai",
+    "email": "djtominai@gmail.com"
+  },
   "platforms": {
     "spotify": "https://open.spotify.com/artist/3hBKAUtRaHKlpbCdaEBxly",
     "youtube": "https://www.youtube.com/@bacagroove",
@@ -19,10 +22,28 @@
     "tiktok": "https://www.tiktok.com/@bacagroove",
     "youtube": "https://www.youtube.com/@bacagroove"
   },
-  "featured": {"slug": "po-korenech", "tag": "Nový singl", "tag_en": "New single"},
-  "video": {"id": "iAGfCQvjxvM", "title": "Černé oči", "label": "Oficiální klip", "label_en": "Official video", "poster_slug": "cerne-oci"},
-  "songs": ["zeme-dostojevskeho", "kruhy-zamotane", "pasli-ovce-valasi", "pod-zlatymi-stromy", "cerne-oci", "burcakove-tango"],
+  "featured": {
+    "slug": "po-korenech",
+    "tag": "Nový singl",
+    "tag_en": "New single"
+  },
+  "video": {
+    "id": "iAGfCQvjxvM",
+    "title": "Černé oči",
+    "label": "Oficiální klip",
+    "label_en": "Official video",
+    "poster_slug": "cerne-oci"
+  },
+  "songs": [
+    "zeme-dostojevskeho",
+    "kruhy-zamotane",
+    "pasli-ovce-valasi",
+    "pod-zlatymi-stromy",
+    "cerne-oci",
+    "burcakove-tango"
+  ],
   "listen_base": "https://listen.bacagroove.com",
   "goatcounter": "https://bacagroove.goatcounter.com/count",
-  "pixel": "9274922125960349"
+  "pixel": "9274922125960349",
+  "theme": "zima"
 }
