@@ -51,9 +51,9 @@ def main():
     if out.exists():
         shutil.rmtree(out)
     (out / "assets").mkdir(parents=True)
-    for f in (ROOT / "assets").glob("*.svg"):
-        shutil.copy(f, out / "assets" / f.name)
-    shutil.copy(ROOT / "assets" / "logo.png", out / "assets" / "logo.png")
+    for f in (ROOT / "assets").iterdir():
+        if f.suffix in (".svg", ".png", ".jpg", ".webp") and f.name != "artist.png":
+            shutil.copy(f, out / "assets" / f.name)
     Image.open(ROOT / "assets" / "artist.png").convert("RGB").save(out / "assets" / "artist.jpg", "JPEG", quality=86, optimize=True)
 
     def song(slug):
