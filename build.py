@@ -158,6 +158,7 @@ PORTRAIT = """<figure class="portrait"><img src="assets/artist.jpg" alt="Bača s
 HEAD_FULL = """<!doctype html><html lang="cs"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="facebook-domain-verification" content="dkidzfmq4sk3lassoqb6xt2xr89gyy" />
+<meta name="msvalidate.01" content="B8289D56CE2B62B0ED2D624091418D16" />
 <link rel="canonical" href="{{BASE}}/">
 <meta property="og:type" content="website"><meta property="og:url" content="{{BASE}}/">
 <meta property="og:title" content="{{TITLE}} | {{TAGLINE}}"><meta property="og:description" content="{{DESC}}">
