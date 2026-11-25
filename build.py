@@ -131,6 +131,7 @@ def main():
     for part in ("head", "art", "tail"):
         f = tdir / f"{part}.html"
         repl["THEME_" + part.upper()] = f.read_text() if f.exists() else ""
+    page = page.replace("{{HEAD}}", repl.pop("HEAD"))   # hlavička nese vlastní {{…}} (og:title…) – nahradit jako první
     for k, v in repl.items():
         page = page.replace("{{" + k + "}}", v)
     page = page.replace("{{" + "BASE" + "}}", base)
@@ -261,6 +262,8 @@ footer{text-align:center;color:var(--mute);font-size:13px;padding-top:8px}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 {{THEME_HEAD}}
+</head>
+<body>
 {{THEME_ART}}
 <div class="wrap">
 <header class="top">
@@ -334,6 +337,8 @@ footer{text-align:center;color:var(--mute);font-size:13px;padding-top:8px}
   });
 })();
 </script>
+</body>
+</html>
 """
 
 if __name__ == "__main__":
